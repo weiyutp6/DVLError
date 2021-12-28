@@ -10,8 +10,8 @@ pip install matplotlib
 
 ## Code workings
 
-parameters could be changed in the param.yaml file
-the purpose of each parameter is included in the comments at the start of main.py
+parameters could be changed in the param.yaml file.
+The purpose of each parameter is included in the comments at the start of main.py
 ```bash
 chmod +x main.py
 ./main.py
