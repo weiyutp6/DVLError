@@ -60,6 +60,7 @@ with open('param.yaml', 'r') as file:
     param = yaml.safe_load(file)
 
 
+# given three 1D simulation results as input and plots the resulting trajectory and target trajectory
 def plot_trajectories(x, y, z):
     error = np.array([x.get_final_pos() - param['x']['end'], y.get_final_pos() - param['y']['end'], z.get_final_pos() -
                       param['z']['end']])
@@ -78,6 +79,7 @@ def plot_trajectories(x, y, z):
     plt.show()
 
 
+# given three 1D simulation results as input and plots the point-wise error of the resulting trajectory
 def plot_error_with_time(x, y, z):
     total_error_matrix_x = x.get_result_trajectory() - np.linspace(param['x']['start'], param['x']['end'],
                                                                    int(param['total_time'] / param['interval']))
@@ -93,11 +95,12 @@ def plot_error_with_time(x, y, z):
     plt.ylabel('error')
     plt.show()
 
+
 x_sim = DVLError(param['x']['start'], param['x']['end'], param['x']['bias'], param['x']['random'], param['interval'],
-             param['total_time'])
+                 param['total_time'])
 y_sim = DVLError(param['y']['start'], param['y']['end'], param['y']['bias'], param['y']['random'], param['interval'],
-             param['total_time'])
+                 param['total_time'])
 z_sim = DVLError(param['z']['start'], param['z']['end'], param['z']['bias'], param['z']['random'], param['interval'],
-             param['total_time'])
+                 param['total_time'])
 plot_trajectories(x_sim, y_sim, z_sim)
 plot_error_with_time(x_sim, y_sim, z_sim)
