@@ -59,30 +59,45 @@ class DVLError:
 with open('param.yaml', 'r') as file:
     param = yaml.safe_load(file)
 
-total_e = 0
-for i in range(10000):
-    x = DVLError(param['x']['start'], param['x']['end'], param['x']['bias'], param['x']['random'], param['interval'],
-                 param['total_time'])
-    y = DVLError(param['y']['start'], param['y']['end'], param['y']['bias'], param['y']['random'], param['interval'],
-                 param['total_time'])
-    z = DVLError(param['z']['start'], param['z']['end'], param['z']['bias'], param['z']['random'], param['interval'],
-                 param['total_time'])
+
+def plot_trajectories(x, y, z):
     error = np.array([x.get_final_pos() - param['x']['end'], y.get_final_pos() - param['y']['end'], z.get_final_pos() -
                       param['z']['end']])
     error_percentage = np.linalg.norm(error) / np.linalg.norm(
         [param['x']['end'], param['y']['end'], param['z']['end']]) * 100
-    print(error)
-    print(error_percentage, end="%\n")
-    total_e += error_percentage
-print(total_e/10000)
-fig = plt.figure()
-ax = plt.axes(projection='3d')
-zline = np.linspace(param['z']['start'], param['z']['end'], int(param['total_time'] / param['interval']))
-yline = np.linspace(param['y']['start'], param['y']['end'], int(param['total_time'] / param['interval']))
-xline = np.linspace(param['x']['start'], param['x']['end'], int(param['total_time'] / param['interval']))
-ax.plot3D(xline, yline, zline, 'blue')
-ax.plot3D(x.get_result_trajectory(), y.get_result_trajectory(), z.get_result_trajectory(), 'red')
-ax.set_xlabel('x')
-ax.set_ylabel('y')
-ax.set_zlabel('z')
-plt.show()
+    fig = plt.figure()
+    ax = plt.axes(projection='3d')
+    zline = np.linspace(param['z']['start'], param['z']['end'], int(param['total_time'] / param['interval']))
+    yline = np.linspace(param['y']['start'], param['y']['end'], int(param['total_time'] / param['interval']))
+    xline = np.linspace(param['x']['start'], param['x']['end'], int(param['total_time'] / param['interval']))
+    ax.plot3D(xline, yline, zline, 'blue')
+    ax.plot3D(x.get_result_trajectory(), y.get_result_trajectory(), z.get_result_trajectory(), 'red')
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_zlabel('z')
+    plt.show()
+
+
+def plot_error_with_time(x, y, z):
+    total_error_matrix_x = x.get_result_trajectory() - np.linspace(param['x']['start'], param['x']['end'],
+                                                                   int(param['total_time'] / param['interval']))
+    total_error_matrix_y = y.get_result_trajectory() - np.linspace(param['y']['start'], param['y']['end'],
+                                                                   int(param['total_time'] / param['interval']))
+    total_error_matrix_z = z.get_result_trajectory() - np.linspace(param['z']['start'], param['z']['end'],
+                                                                   int(param['total_time'] / param['interval']))
+    error_matrix = np.sqrt(np.square(total_error_matrix_x) + np.square(total_error_matrix_y) +
+                           np.square(total_error_matrix_z))
+    time = range(int(param['total_time'] / param['interval']))
+    plt.plot(time, error_matrix)
+    plt.xlabel('time')
+    plt.ylabel('error')
+    plt.show()
+
+x_sim = DVLError(param['x']['start'], param['x']['end'], param['x']['bias'], param['x']['random'], param['interval'],
+             param['total_time'])
+y_sim = DVLError(param['y']['start'], param['y']['end'], param['y']['bias'], param['y']['random'], param['interval'],
+             param['total_time'])
+z_sim = DVLError(param['z']['start'], param['z']['end'], param['z']['bias'], param['z']['random'], param['interval'],
+             param['total_time'])
+plot_trajectories(x_sim, y_sim, z_sim)
+plot_error_with_time(x_sim, y_sim, z_sim)
